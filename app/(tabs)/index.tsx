@@ -1,74 +1,151 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, TextInput, Button, View, Alert, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RadioButton } from 'react-native-paper'; // Import from react-native-paper
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function SettingsScreen() {
+  const [url, setUrl] = useState('');
+  const [imageQuality, setImageQuality] = useState('HD'); // Default to HD
+  const [imagePostType, setImagePostType] = useState('multipart'); // Default to multipart
 
-export default function HomeScreen() {
+  useEffect(() => {
+    // Load saved URL, image quality, and image post type from AsyncStorage when the component mounts
+    const loadSettings = async () => {
+      try {
+        const savedUrl = await AsyncStorage.getItem('apiUrl');
+        const savedImageQuality = await AsyncStorage.getItem('imageQuality');
+        const savedImagePostType = await AsyncStorage.getItem('imagePostType');
+
+        if (savedUrl) {
+          setUrl(savedUrl);
+        }
+        if (savedImageQuality) {
+          setImageQuality(savedImageQuality);
+        }
+        if (savedImagePostType) {
+          setImagePostType(savedImagePostType);
+        }
+      } catch (error) {
+        console.error('Error loading settings from AsyncStorage', error);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
+  const handleSaveUrl = async () => {
+    try {
+      await AsyncStorage.setItem('apiUrl', url);
+      Alert.alert('Success', 'API URL saved successfully');
+    } catch (error) {
+      console.error('Error saving URL to AsyncStorage', error);
+    }
+  };
+
+  const handleImageQualityChange = async (quality) => {
+    setImageQuality(quality); // Update state
+    try {
+      await AsyncStorage.setItem('imageQuality', quality); // Save to AsyncStorage immediately
+    } catch (error) {
+      console.error('Error saving image quality to AsyncStorage', error);
+    }
+  };
+
+  const handleImagePostTypeChange = async (type) => {
+    setImagePostType(type); // Update state
+    try {
+      await AsyncStorage.setItem('imagePostType', type); // Save to AsyncStorage immediately
+    } catch (error) {
+      console.error('Error saving image post type to AsyncStorage', error);
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Server Settings</Text>
+        <TextInput
+          style={styles.input}
+          value={url}
+          onChangeText={setUrl}
+          placeholder="Enter API URL"
+          placeholderTextColor="#ccc"
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Button title="Save URL" onPress={handleSaveUrl} />
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Image Quality</Text>
+        <View style={styles.radioGroup}>
+          {['UHD', 'HD', 'SD'].map((quality) => (
+            <View key={quality} style={styles.radioOption}>
+              <RadioButton
+                value={quality}
+                status={imageQuality === quality ? 'checked' : 'unchecked'}
+                onPress={() => handleImageQualityChange(quality)} // Save immediately on selection
+              />
+              <Text style={styles.radioText}>{quality}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Image Post Type</Text>
+        <View style={styles.radioGroup}>
+          {['multipart', 'base64'].map((type) => (
+            <View key={type} style={styles.radioOption}>
+              <RadioButton
+                value={type}
+                status={imagePostType === type ? 'checked' : 'unchecked'}
+                onPress={() => handleImagePostTypeChange(type)} // Save immediately on selection
+              />
+              <Text style={styles.radioText}>
+                {type === 'multipart' ? 'Multipart Transfer' : 'Base64 Post'}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: 'black', // Black background for the settings page
+  },
+  section: {
+    marginBottom: 30, // Space between sections
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    color: 'white', // White text color for the input field
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  radioOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  radioText: {
+    color: 'white',
+    marginLeft: 10,
   },
 });
