@@ -35,6 +35,16 @@ npm run reset-project
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
+## Video Demonstration
+
+Here’s a demonstration of the app:
+
+<video width="320" height="720" controls>
+  <source src="examples/screen-20250326-215517.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+
 ## Learn more
 
 To learn more about developing your project with Expo, look at the following resources:
