@@ -25,6 +25,15 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Configure app API settings
+
+In the app navigate to the 'Settings' tab and enter a server address to post to.
+
+With `multipart` selected as the default method the app will post to `{API}/upload/multipart`. For base64 it will upload to `{API}/upload/base64`.
+
+Use the test server in `image-upload-server/` on localhost to test the app. With image-upload-server running you can enter `http://x.x.x.x:3000` in ther server settings where `x.x.x.x` is the local IP address of the machine hostin the nodejs server.
+
+
 ## Run the image-upload-server for testing image posts
 
 1. Open a terminal and navigate to the server folder.
