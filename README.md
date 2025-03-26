@@ -25,15 +25,20 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+## Run the image-upload-server for testing image posts
 
-When you're ready, run:
+1. Open a terminal and navigate to the server folder.
 
-```bash
-npm run reset-project
-```
+   ```bash
+   cd image-upload-server/
+   ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Run the nodejs server.
+
+   ```bash
+   node server.js
+   ```
+3. Capture a picture and post it via the app and monitor the server terminal output and `uploads` folder for received images.
 
 ## Video Demonstration
 
