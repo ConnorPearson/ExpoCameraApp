@@ -52,7 +52,7 @@ Use the test server in `image-upload-server/` on localhost to test the app. With
 Here’s a demonstration of the app:
 
 <video width="320" height="720" controls>
-  <source src="examples/screen-20250326-215517.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/ConnorPearson/ExpoCameraApp/refs/heads/master/examples/screen-20250326-215517.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
